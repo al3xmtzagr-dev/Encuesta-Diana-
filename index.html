@@ -34,10 +34,11 @@ button {
   border-radius: 10px;
   border: none;
   cursor: pointer;
+  transition: all .3s ease;
 }
 
 .yes { background:#6c8cff; color:white; }
-.no  { background:#e0e0e0; }
+.no  { background:#e0e0e0; position:relative; }
 
 p { color:#555; font-size:18px; }
 </style>
@@ -58,48 +59,51 @@ p { color:#555; font-size:18px; }
 <script>
 let step = 0;
 let phase = 0;
+let noCount = 0;
 
 const flow = [
-  { type:"diana" },
-  { type:"gender" },
-
-  { type:"animal", q:"¿Sabías que hay ranas que pueden congelarse y volver a la vida?",
-    fact:"A veces detenerse también es una forma de sobrevivir 🐸" },
-
-  { type:"animal", q:"¿Sabías que las abejas se comunican bailando?",
-    fact:"Incluso los movimientos pequeños pueden decir mucho 🐝" },
-
-  { type:"animal", q:"¿Sabías que los pulpos regeneran sus brazos?",
-    fact:"Perder algo no significa no poder volver a crecer 🐙" },
-
-  { type:"animal", q:"¿Sabías que el ajolote regenera corazón y cerebro?",
-    fact:"Sanar también puede ser un proceso natural 🐸" },
-
-  { type:"final", q:"¿Eres consciente de que vales muchísimo?",
-    fact:"A veces solo hace falta que alguien lo recuerde ✨" },
-
-  { type:"final", q:"¿Te das permiso de seguir adelante a tu ritmo?",
-    fact:"Sin prisa, sin presión 💙" }
+  "diana",
+  "gender",
+  "animal1",
+  "animal2",
+  "animal3",
+  "animal4",
+  "worth",
+  "end"
 ];
 
 function start(){
   const m=document.getElementById("bgMusic");
-  m.volume=0.25; m.play().catch(()=>{});
-  step=0; phase=0;
+  m.volume=0.25;
+  m.play().catch(()=>{});
+  step=0; phase=0; noCount=0;
   render();
 }
 
 function render(){
   const card=document.getElementById("card");
-  const q=flow[step];
   card.innerHTML="";
-
-  if(q.type==="diana") return diana(card);
-  if(q.type==="gender") return gender(card);
-  if(q.type==="animal") return animal(card,q);
-  if(q.type==="final") return finalQ(card,q);
+  switch(flow[step]){
+    case "diana": diana(card); break;
+    case "gender": gender(card); break;
+    case "animal1": animal(card,
+      "¿Sabías que hay ranas que pueden congelarse y volver a la vida?",
+      "A veces detenerse también es una forma de sobrevivir 🐸"); break;
+    case "animal2": animal(card,
+      "¿Sabías que las abejas se comunican bailando?",
+      "Incluso los movimientos pequeños pueden decir mucho 🐝"); break;
+    case "animal3": animal(card,
+      "¿Sabías que los pulpos regeneran sus brazos?",
+      "Perder algo no significa no poder volver a crecer 🐙"); break;
+    case "animal4": animal(card,
+      "¿Sabías que el ajolote puede regenerar corazón y cerebro?",
+      "Sanar también puede ser un proceso natural 🐸"); break;
+    case "worth": worth(card); break;
+    case "end": end(); break;
+  }
 }
 
+/* ---------- DIANA ---------- */
 function diana(card){
   if(phase===0){
     card.innerHTML=`
@@ -114,46 +118,77 @@ function diana(card){
   }
 }
 
+/* ---------- GÉNERO ---------- */
 function gender(card){
   if(phase===0){
     card.innerHTML=`
       <h2>¿Eres chica?</h2>
       <button class="yes" onclick="next()">Sí</button>
       <button class="no" onclick="phase=1;render()">No</button>`;
+  } else if(phase===1){
+    card.innerHTML=`
+      <h2>Mmm… lo dudo 🤨</h2>
+      <button class="yes" onclick="next()">Está bien, sí soy una chica</button>
+      <button class="no" onclick="phase=2;render()">Te digo que soy chico</button>`;
   } else {
     card.innerHTML=`
-      <h2>🤨</h2>
-      <button class="yes" onclick="next()">Está bien… sí soy una chica</button>
-      <button class="no" onclick="onlyYes('Me atrapaste 😅')">Te digo que soy chico</button>`;
+      <h2>Ajá… 😏</h2>
+      <button class="yes" onclick="next()">Me atrapaste, sí soy una chica</button>`;
   }
 }
 
-function animal(card,q){
+/* ---------- ANIMALES ---------- */
+function animal(card,question,fact){
   if(phase===0){
     card.innerHTML=`
-      <h2>${q.q}</h2>
-      <button class="yes" onclick="showFact(q)">Sí</button>
+      <h2>${question}</h2>
+      <button class="yes" onclick="animalYes('${fact}')">Sí</button>
       <button class="no" onclick="phase=1;render()">No</button>`;
   } else {
     card.innerHTML=`
       <h2>¿Quieres aprender un poco?</h2>
-      <button class="yes" onclick="showFact(q)">Sí</button>
-      <button class="no" onclick="onlyYes('Creo que sí quieres 😊')">No</button>`;
+      <button class="yes" onclick="animalYes('${fact}')">Sí</button>
+      <button class="no" onclick="animalForce('${fact}')">No</button>`;
   }
 }
 
-function finalQ(card,q){
-  card.innerHTML=`
-    <h2>${q.q}</h2>
-    <button class="yes" onclick="showFact(q)">Sí</button>`;
+function animalYes(fact){
+  showFact(fact);
 }
 
-function showFact(q){
+function animalForce(fact){
+  showFact(fact);
+}
+
+function showFact(text){
   const card=document.getElementById("card");
-  card.innerHTML=`<p>${q.fact}</p>`;
+  card.innerHTML=`<p>${text}</p>`;
   setTimeout(next,3500);
 }
 
+/* ---------- VALOR ---------- */
+function worth(card){
+  if(noCount===0){
+    card.innerHTML=`
+      <h2>¿Eres consciente de que vales muchísimo?</h2>
+      <button class="yes" onclick="showFact('A veces solo hace falta que alguien lo recuerde ✨')">Sí</button>
+      <button class="no" onclick="moveNo()">No</button>`;
+  }
+}
+
+function moveNo(){
+  noCount++;
+  const noBtn=document.querySelector(".no");
+  if(noCount>=4){
+    noBtn.remove();
+    document.querySelector(".yes").style.transform="scale(1.2)";
+  } else {
+    noBtn.style.left=(Math.random()*80-40)+"px";
+    noBtn.style.top=(Math.random()*40-20)+"px";
+  }
+}
+
+/* ---------- COMÚN ---------- */
 function onlyYes(text){
   const card=document.getElementById("card");
   card.innerHTML=`
@@ -162,9 +197,8 @@ function onlyYes(text){
 }
 
 function next(){
-  step++; phase=0;
-  if(step<flow.length) render();
-  else end();
+  step++; phase=0; noCount=0;
+  render();
 }
 
 function end(){
