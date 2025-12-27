@@ -154,4 +154,68 @@ function moveNo(){
   if(noCount>=4){
     n.remove();
     document.querySelector(".yes").style.transform="scale(1.2)";
+  }else{
+    n.style.left=(Math.random()*80-40)+"px";
+    n.style.top=(Math.random()*40-20)+"px";
   }
+}
+
+function showText(t){
+  const c=document.getElementById("card");
+  c.innerHTML=`<p>${t}</p>`;
+  setTimeout(next,3800);
+}
+
+/* ---------- SERENDIPIA ---------- */
+function serendipia(c){
+  c.innerHTML=`<h2>¿Sabes qué es la serendipia?</h2>
+  <button class="yes" onclick="serText(true)">Sí</button>
+  <button class="no" onclick="serText(false)">No</button>`;
+}
+
+function serText(k){
+  const c=document.getElementById("card");
+  c.innerHTML=`<p>
+  La serendipia es cuando encuentras algo valioso sin estarlo buscando.<br><br>
+  A veces la vida parece desordenada, injusta o confusa… pero en medio de eso,
+  aparecen personas, momentos o aprendizajes que terminan siendo importantes.<br><br>
+  No porque lo planeaste, sino porque estabas ahí.
+  </p>
+  <button class="yes" onclick="next()">Finalizar</button>`;
+}
+
+/* ---------- COMÚN ---------- */
+function onlyYes(t){
+  const c=document.getElementById("card");
+  c.innerHTML=`<p>${t}</p>
+  <button class="yes" onclick="next()">Continuar</button>`;
+}
+
+function next(){
+  step++;phase=0;noCount=0;
+  render();
+}
+
+/* ---------- FINAL ---------- */
+function end(){
+  document.getElementById("card").innerHTML=`
+  <h2>Gracias por responder 🐸💙</h2>
+  <p>Esta encuesta fue realizada por el<br>
+  <strong>Equipo Internacional de Investigación de Ranas</strong>.</p>
+  <p>(Esto es porque las ranas son mi animal favorito 🐸)</p>
+  <p>
+  Después de analizar cuidadosamente tus respuestas,
+  concluimos que eres una persona valiosa, fuerte y capaz.
+  </p>
+  <p>
+  No tienes que correr, no tienes que demostrar nada,
+  y no tienes que tener todo claro ahora.
+  </p>
+  <p>
+  Gracias por tomarte este momento ✨
+  </p>`;
+}
+</script>
+
+</body>
+</html>
