@@ -177,3 +177,36 @@ function dodge() {
   if (noCount === 1) extra.innerText = "¿Estás segura? 👀";
   else if (noCount === 2) extra.innerText = "Inténtalo una vez más 😅";
   else if (noCount === 3) extra.innerText = "Creo que este botón no quiere cooperar…";
+  else {
+    noBtn.style.display = "none";
+    extra.innerText = "Parece que solo queda una opción 🙂";
+    return;
+  }
+
+  noBtn.style.left = Math.random() * 120 - 60 + "px";
+  noBtn.style.top = Math.random() * 60 - 30 + "px";
+}
+
+function end() {
+  document.getElementById("card").innerHTML = `
+    <h2>Gracias por responder 🐸💙</h2>
+    <p>
+      Esta encuesta fue realizada por el<br>
+      <strong>Equipo Internacional de Investigación de Ranas</strong>.
+    </p>
+    <p>
+      (Esto es porque las ranas son mi animal favorito 🐸)
+    </p>
+    <p>
+      Concluimos que eres alguien fuerte, valiosa<br>
+      y que merece cosas bonitas, incluso en momentos difíciles.
+    </p>
+    <p>
+      Gracias por llegar hasta aquí ✨
+    </p>
+  `;
+}
+</script>
+
+</body>
+</html>
