@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Encuesta Importante</title>
+<title>Encuesta para Diana</title>
 
 <style>
   body {
@@ -64,16 +64,22 @@
     margin-top: 15px;
     font-size: 16px;
     color: #777;
-    min-height: 40px;
+    min-height: 50px;
   }
 </style>
 </head>
 
 <body>
 
+<!-- 🎵 Música -->
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_3c7a33c6f2.mp3" type="audio/mpeg">
+</audio>
+
 <div id="card">
   <h1>Encuesta para Diana</h1>
   <p>(Aún no te he preguntado por tus apellidos)</p>
+  <p>Prometo que no tarda mucho 😊</p>
   <button class="yes" onclick="start()">Empezar</button>
 </div>
 
@@ -92,24 +98,36 @@ const questions = [
     yesExtra: "Me alegra que hayas escogido eso… si no, tendría algunas preguntas 🤨"
   },
   {
-    q: "¿Sabías que hay ranas capaces de adaptarse a temperaturas extremas?",
-    yesExtra: "Así como ellas, tú también puedes adaptarte a lo que está por venir 🐸"
+    q: "¿Sabías que hay ranas que pueden congelarse completamente y volver a la vida?",
+    yesExtra: "A veces detenerse también es una forma de sobrevivir 🐸"
+  },
+  {
+    q: "¿Sabías que las abejas se comunican bailando?",
+    yesExtra: "Incluso los movimientos pequeños pueden decir mucho 🐝"
+  },
+  {
+    q: "¿Sabías que los pulpos pueden regenerar sus brazos?",
+    yesExtra: "Perder algo no significa no poder volver a crecer 🐙"
+  },
+  {
+    q: "¿Sabías que las mariposas monarca viajan miles de kilómetros sin haberlo hecho antes?",
+    yesExtra: "A veces avanzamos sin saber exactamente cómo, y aun así llegamos 🦋"
+  },
+  {
+    q: "¿Sabías que el axolotl puede regenerar partes de su corazón y cerebro?",
+    yesExtra: "Sanar también puede ser un proceso natural 🐸"
   },
   {
     q: "Pregunta importante: ¿eres consciente de que vales muchísimo?",
     yesExtra: "A veces solo hace falta que alguien lo recuerde ✨"
   },
   {
-    q: "¿Sabías que los pingüinos eligen a su pareja regalando una piedra?",
-    yesExtra: "No todo lo valioso tiene que ser perfecto para ser significativo 🐧"
-  },
-  {
-    q: "¿Sabes que has logrado muchas cosas por ti misma?",
-    yesExtra: "Incluso cuando nadie más las ve"
+    q: "¿Sabías que la oxitocina ayuda a sentir calma y conexión?",
+    yesExtra: "Leer algo bonito, sonreír o sentirse acompañado también la activa 💙"
   },
   {
     q: "¿Conoces la palabra *Serendipia*?",
-    yesExtra: "Encontrar algo bonito cuando no lo estabas buscando 💙"
+    yesExtra: "Encontrar algo bonito cuando no lo estabas buscando"
   },
   {
     q: "Última y muy importante: ¿te das permiso de seguir adelante a tu ritmo?",
@@ -118,6 +136,9 @@ const questions = [
 ];
 
 function start() {
+  document.getElementById("bgMusic").volume = 0.25;
+  document.getElementById("bgMusic").play();
+
   step = 0;
   showQuestion();
 }
@@ -136,7 +157,7 @@ function next() {
   document.getElementById("extra").innerHTML = questions[step].yesExtra;
 
   yesSize += 0.05;
-  document.getElementById("yesBtn").style.transform = `scale(${yesSize})`;
+  document.getElementById("yesBtn").style.transform = \`scale(\${yesSize})\`;
 
   setTimeout(() => {
     step++;
@@ -145,7 +166,7 @@ function next() {
     } else {
       end();
     }
-  }, 1400);
+  }, 3500);
 }
 
 function dodge() {
@@ -156,36 +177,3 @@ function dodge() {
   if (noCount === 1) extra.innerText = "¿Estás segura? 👀";
   else if (noCount === 2) extra.innerText = "Inténtalo una vez más 😅";
   else if (noCount === 3) extra.innerText = "Creo que este botón no quiere cooperar…";
-  else {
-    noBtn.style.display = "none";
-    extra.innerText = "Parece que solo queda una opción 🙂";
-    return;
-  }
-
-  noBtn.style.left = Math.random() * 120 - 60 + "px";
-  noBtn.style.top = Math.random() * 60 - 30 + "px";
-}
-
-function end() {
-  document.getElementById("card").innerHTML = `
-    <h2>Gracias por responder 🐸💙</h2>
-    <p>
-      Esta encuesta fue realizada por el<br>
-      <strong>Equipo Internacional de Investigación de Ranas</strong>.
-    </p>
-    <p>
-      (Esto es porque las ranas son mi animal favorito 🐸)
-    </p>
-    <p>
-      Concluimos que eres alguien fuerte, valiosa<br>
-      y que merece cosas bonitas, incluso en momentos difíciles.
-    </p>
-    <p>
-      Gracias por llegar hasta aquí ✨
-    </p>
-  `;
-}
-</script>
-
-</body>
-</html>
