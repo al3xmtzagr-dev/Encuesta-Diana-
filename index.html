@@ -51,27 +51,21 @@
     color: white;
   }
 
-  .yes:hover {
-    transform: scale(1.05);
-  }
-
   .no {
     background: #e0e0e0;
-    position: relative;
   }
 
   #extra {
-    margin-top: 15px;
+    margin-top: 18px;
     font-size: 16px;
     color: #777;
-    min-height: 50px;
+    min-height: 60px;
   }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 Música (opcional, no rompe en celular) -->
 <audio id="bgMusic" loop>
   <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_3c7a33c6f2.mp3" type="audio/mpeg">
 </audio>
@@ -84,112 +78,199 @@
 </div>
 
 <script>
-let step = -1;
-let noCount = 0;
-let yesSize = 1;
+let step = 0;
+let subStep = 0;
 
 const questions = [
+  { type: "diana" },
+  { type: "gender" },
+
   {
-    q: "Pregunta rápida para empezar 😊 ¿Tu nombre es Diana?",
-    yesExtra: ""
+    type: "animal",
+    q: "¿Sabías que hay ranas que pueden congelarse y volver a la vida?",
+    fact: "A veces detenerse también es una forma de sobrevivir 🐸"
   },
   {
-    q: "¿Eres chica?",
-    yesExtra: "Me alegra que hayas escogido eso… si no, tendría algunas preguntas 🤨"
-  },
-  {
-    q: "¿Sabías que hay ranas que pueden congelarse completamente y volver a la vida?",
-    yesExtra: "A veces detenerse también es una forma de sobrevivir 🐸"
-  },
-  {
+    type: "animal",
     q: "¿Sabías que las abejas se comunican bailando?",
-    yesExtra: "Incluso los movimientos pequeños pueden decir mucho 🐝"
+    fact: "Incluso los movimientos pequeños pueden decir mucho 🐝"
   },
   {
+    type: "animal",
     q: "¿Sabías que los pulpos pueden regenerar sus brazos?",
-    yesExtra: "Perder algo no significa no poder volver a crecer 🐙"
+    fact: "Perder algo no significa no poder volver a crecer 🐙"
   },
   {
-    q: "¿Sabías que las mariposas monarca viajan miles de kilómetros sin haberlo hecho antes?",
-    yesExtra: "A veces avanzamos sin saber exactamente cómo, y aun así llegamos 🦋"
+    type: "animal",
+    q: "¿Sabías que las mariposas monarca viajan miles de kilómetros?",
+    fact: "A veces avanzamos sin saber exactamente cómo, y aun así llegamos 🦋"
   },
   {
-    q: "¿Sabías que el axolotl puede regenerar partes de su corazón y cerebro?",
-    yesExtra: "Sanar también puede ser un proceso natural 🐸"
+    type: "animal",
+    q: "¿Sabías que el ajolote puede regenerar partes de su corazón y cerebro?",
+    fact: "Sanar también puede ser un proceso natural 🐸"
   },
+
   {
+    type: "normal",
     q: "Pregunta importante: ¿eres consciente de que vales muchísimo?",
-    yesExtra: "A veces solo hace falta que alguien lo recuerde ✨"
+    fact: "A veces solo hace falta que alguien lo recuerde ✨"
   },
   {
+    type: "normal",
     q: "¿Sabías que la oxitocina ayuda a sentir calma y conexión?",
-    yesExtra: "Leer algo bonito, sonreír o sentirse acompañado también la activa 💙"
+    fact: "Leer algo bonito, sonreír o sentirse acompañado también la activa 💙"
   },
   {
-    q: "¿Conoces la palabra *Serendipia*?",
-    yesExtra: "Encontrar algo bonito cuando no lo estabas buscando"
-  },
-  {
+    type: "normal",
     q: "Última y muy importante: ¿te das permiso de seguir adelante a tu ritmo?",
-    yesExtra: "Sin prisa, sin presión"
+    fact: "Sin prisa, sin presión"
   }
 ];
 
 function start() {
   const music = document.getElementById("bgMusic");
   music.volume = 0.25;
-
-  // Intentar reproducir música sin romper la ejecución
-  music.play().catch(() => {
-    console.log("El navegador bloqueó la música, pero seguimos 🙂");
-  });
-
+  music.play().catch(()=>{});
   step = 0;
-  showQuestion();
+  subStep = 0;
+  show();
 }
 
-function showQuestion() {
-  document.getElementById("card").innerHTML = `
-    <h2>${questions[step].q}</h2>
-    <p id="extra"></p>
-    <button class="yes" id="yesBtn" onclick="next()">Sí</button>
-    <button class="no" id="noBtn" onmouseover="dodge()">No</button>
-  `;
-  noCount = 0;
-}
+function show() {
+  const card = document.getElementById("card");
+  const q = questions[step];
 
-function next() {
-  document.getElementById("extra").innerHTML = questions[step].yesExtra;
-
-  yesSize += 0.05;
-  document.getElementById("yesBtn").style.transform = `scale(${yesSize})`;
+  // Pausa visual
+  card.innerHTML = `<p>...</p>`;
 
   setTimeout(() => {
-    step++;
-    if (step < questions.length) {
-      showQuestion();
-    } else {
-      end();
-    }
+    if (q.type === "diana") showDiana();
+    else if (q.type === "gender") showGender();
+    else if (q.type === "animal") showAnimal(q);
+    else showNormal(q);
+  }, 600);
+}
+
+/* ---------- DIANA ---------- */
+function showDiana() {
+  if (subStep === 0) {
+    render(
+      "Pregunta rápida 😊 ¿Tu nombre es Diana?",
+      "Sí",
+      "No",
+      () => next(),
+      () => { subStep = 1; show(); }
+    );
+  } else if (subStep === 1) {
+    render(
+      "¿Estás segura?",
+      "Me equivoqué, sí soy Diana",
+      "Sí, no soy Diana",
+      () => next(),
+      () => {
+        render(
+          "Es imposible que no seas Diana porque no conozco a nadie más con ese nombre",
+          "Bueno… sí soy Diana",
+          null,
+          () => next()
+        );
+      }
+    );
+  }
+}
+
+/* ---------- GÉNERO ---------- */
+function showGender() {
+  if (subStep === 0) {
+    render(
+      "¿Eres chica?",
+      "No, sí soy una chica en realidad",
+      "Sí, soy un chico",
+      () => next(),
+      () => { subStep = 1; show(); }
+    );
+  } else if (subStep === 1) {
+    render(
+      "¿Segura?",
+      "Está bien, sí soy una chica",
+      "Te digo que soy chico, me daría cuenta",
+      () => next(),
+      () => {
+        render(
+          "Está bien…",
+          "Me atrapaste, soy una chica",
+          null,
+          () => next()
+        );
+      }
+    );
+  }
+}
+
+/* ---------- ANIMALES ---------- */
+function showAnimal(q) {
+  if (subStep === 0) {
+    render(
+      q.q,
+      "Sí",
+      "No",
+      () => showFact(q),
+      () => { subStep = 1; show(); }
+    );
+  } else {
+    render(
+      "¿Quieres aprender un poco?",
+      "Sí",
+      "No",
+      () => showFact(q),
+      () => {
+        render(
+          "Creo que sí quieres aprender 🙂",
+          "Sí",
+          null,
+          () => showFact(q)
+        );
+      }
+    );
+  }
+}
+
+/* ---------- NORMALES ---------- */
+function showNormal(q) {
+  render(
+    q.q,
+    "Sí",
+    "No",
+    () => showFact(q),
+    () => showFact(q)
+  );
+}
+
+function showFact(q) {
+  document.getElementById("card").innerHTML = `
+    <p>${q.fact}</p>
+  `;
+  setTimeout(() => {
+    next();
   }, 3500);
 }
 
-function dodge() {
-  noCount++;
-  const noBtn = document.getElementById("noBtn");
-  const extra = document.getElementById("extra");
+function render(text, yesText, noText, yesFn, noFn) {
+  document.getElementById("card").innerHTML = `
+    <h2>${text}</h2>
+    <div>
+      <button class="yes" onclick="(${yesFn.toString()})()">${yesText}</button>
+      ${noText ? `<button class="no" onclick="(${noFn.toString()})()">${noText}</button>` : ""}
+    </div>
+  `;
+}
 
-  if (noCount === 1) extra.innerText = "¿Estás segura? 👀";
-  else if (noCount === 2) extra.innerText = "Inténtalo una vez más 😅";
-  else if (noCount === 3) extra.innerText = "Creo que este botón no quiere cooperar…";
-  else {
-    noBtn.style.display = "none";
-    extra.innerText = "Parece que solo queda una opción 🙂";
-    return;
-  }
-
-  noBtn.style.left = Math.random() * 120 - 60 + "px";
-  noBtn.style.top = Math.random() * 60 - 30 + "px";
+function next() {
+  step++;
+  subStep = 0;
+  if (step < questions.length) show();
+  else end();
 }
 
 function end() {
@@ -206,9 +287,7 @@ function end() {
       Concluimos que eres alguien fuerte, valiosa<br>
       y que merece cosas bonitas, incluso en momentos difíciles.
     </p>
-    <p>
-      Gracias por llegar hasta aquí ✨
-    </p>
+    <p>Gracias por llegar hasta aquí ✨</p>
   `;
 }
 </script>
