@@ -5,36 +5,42 @@
 <title>Encuesta para Diana</title>
 
 <style>
-body{
+body {
   font-family: Arial, sans-serif;
-  background: linear-gradient(#f7f7fb,#eef1ff);
-  text-align:center;
-  padding:40px;
+  background: linear-gradient(#f7f7fb, #eef1ff);
+  text-align: center;
+  padding: 40px;
 }
-#card{
-  background:white;
-  max-width:540px;
-  margin:auto;
-  padding:35px;
-  border-radius:18px;
-  box-shadow:0 12px 30px rgba(0,0,0,.12);
+
+#card {
+  background: white;
+  max-width: 520px;
+  margin: auto;
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  animation: fade .5s ease;
 }
-h1,h2{color:#333}
-p{font-size:18px;color:#555}
-button{
-  padding:12px 24px;
-  font-size:16px;
-  margin:10px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  transition:.3s;
+
+@keyframes fade {
+  from { opacity:0; transform:translateY(10px); }
+  to { opacity:1; transform:translateY(0); }
 }
-.yes{background:#6c8cff;color:white}
-.no{background:#e0e0e0;position:relative}
-.yes:hover{transform:scale(1.05)}
-#extra{min-height:60px;margin-top:15px;color:#666}
-.hidden{display:none}
+
+button {
+  padding: 12px 22px;
+  font-size: 16px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.yes { background:#6c8cff; color:white; }
+.no  { background:#e0e0e0; position:relative; }
+
+p { color:#555; font-size:18px; }
 </style>
 </head>
 
@@ -43,137 +49,188 @@ button{
 <div id="card">
   <h1>Encuesta para Diana</h1>
   <p>(Aún no te he preguntado por tus apellidos)</p>
-  <p>Prometo que no tarda mucho 😊</p>
   <button class="yes" onclick="start()">Empezar</button>
 </div>
 
 <script>
-let step=0, phase=0, noCount=0;
+let step = 0;
+let phase = 0;
+let noCount = 0;
 
-const questions=[
-{type:"name",q:"Pregunta rápida 😊 ¿Tu nombre es Diana?"},
-{type:"gender",q:"¿Eres chica?"},
-{type:"animal",q:"¿Sabías que algunas ranas pueden congelarse y volver a la vida?",
- yes:"A veces detenerse también es una forma de sobrevivir 🐸"},
-{type:"animal",q:"¿Sabías que las abejas se comunican bailando?",
- yes:"Incluso los movimientos pequeños pueden decir mucho 🐝"},
-{type:"animal",q:"¿Sabías que los pulpos regeneran sus brazos?",
- yes:"Perder algo no significa no poder volver a crecer 🐙"},
-{type:"animal",q:"¿Sabías que el ajolote regenera partes de su corazón y cerebro?",
- yes:"Sanar también puede ser un proceso natural 🐸"},
-{type:"motivation",q:"Pregunta importante: ¿eres consciente de que vales muchísimo?",
- yes:"A veces solo hace falta que alguien te lo recuerde ✨"},
-{type:"motivation",q:"¿Sabes que has logrado mucho por ti misma?",
- yes:"Y eso nadie te lo puede quitar"},
-{type:"motivation",q:"¿Sabes que puedes con esto y con más?",
- yes:"Incluso si hoy se siente pesado"},
-{type:"serendipia",q:"¿Conoces la palabra Serendipia?"},
+const flow = [
+  "diana","gender",
+  "animal1","animal2","animal3","animal4",
+  "worth1","worth2","worth3","worth4","worth5",
+  "serendipia",
+  "end"
 ];
 
 function start(){
-  step=0;phase=0;noCount=0;
+  step=0; phase=0; noCount=0;
   render();
 }
 
 function render(){
-  const c=document.getElementById("card");
-  const q=questions[step];
-  noCount=0;
-
-  let yesTxt="Sí", noTxt="No";
-
-  if(q.type==="name" && phase===1){
-    yesTxt="Me equivoqué, sí soy Diana";
-    noTxt="Sí, no soy Diana";
+  const card=document.getElementById("card");
+  card.innerHTML="";
+  switch(flow[step]){
+    case "diana": diana(card); break;
+    case "gender": gender(card); break;
+    case "animal1": animal(card,
+      "¿Sabías que hay ranas que pueden congelarse y volver a la vida?",
+      "A veces detenerse también es una forma de sobrevivir 🐸"); break;
+    case "animal2": animal(card,
+      "¿Sabías que las abejas se comunican bailando?",
+      "Incluso los movimientos pequeños pueden decir mucho 🐝"); break;
+    case "animal3": animal(card,
+      "¿Sabías que los pulpos regeneran sus brazos?",
+      "Perder algo no significa no poder volver a crecer 🐙"); break;
+    case "animal4": animal(card,
+      "¿Sabías que el ajolote puede regenerar corazón y cerebro?",
+      "Sanar también puede ser un proceso natural 🐸"); break;
+    case "worth1": worth(card,"¿Eres consciente de que vales muchísimo?",
+      "A veces solo hace falta que alguien lo recuerde ✨"); break;
+    case "worth2": worth(card,"¿Sabes que has logrado mucho por ti misma?",
+      "Todo lo que has hecho hasta ahora también cuenta"); break;
+    case "worth3": worth(card,"¿Sabes que puedes con esto y con mucho más?",
+      "Incluso si hoy se siente pesado"); break;
+    case "worth4": worth(card,"¿Sabes que no tienes que tener todo resuelto ahora?",
+      "Nadie lo tiene, aunque a veces lo parezca"); break;
+    case "worth5": worth(card,"¿Te das permiso de avanzar a tu ritmo?",
+      "Sin compararte, sin exigirte de más"); break;
+    case "serendipia": serendipia(card); break;
+    case "end": end(); break;
   }
-  if(q.type==="gender"){
-    if(phase===0){yesTxt="Sí, soy una chica";noTxt="Sí, soy un chico";}
-    if(phase===1){yesTxt="Está bien, sí soy una chica";noTxt="Te digo que soy chico";}
-    if(phase===2){yesTxt="Me atrapaste, soy una chica";noTxt=null;}
-  }
-
-  c.innerHTML=`
-    <h2>${q.q}</h2>
-    <div id="extra"></div>
-    <div id="buttons">
-      ${yesTxt?`<button class="yes" onclick="yes()">${yesTxt}</button>`:""}
-      ${noTxt?`<button class="no" onclick="no()">${noTxt}</button>`:""}
-    </div>
-  `;
 }
 
-function yes(){
-  const q=questions[step];
-  document.getElementById("buttons").classList.add("hidden");
-
-  let msg="";
-  if(q.type==="animal"||q.type==="motivation") msg=q.yes;
-  if(q.type==="serendipia"){
-    msg="Serendipia es encontrar algo bonito cuando no lo estabas buscando. A veces la vida hace eso también 💙";
+/* ---------- DIANA ---------- */
+function diana(card){
+  if(phase===0){
+    card.innerHTML=`
+      <h2>¿Tu nombre es Diana?</h2>
+      <button class="yes" onclick="next()">Sí</button>
+      <button class="no" onclick="phase=1;render()">No</button>`;
+  } else {
+    card.innerHTML=`
+      <h2>¿Estás segura?</h2>
+      <button class="yes" onclick="next()">Me equivoqué, sí soy Diana</button>
+      <button class="no" onclick="onlyYes('Es imposible que no seas Diana 😌')">Sí, no soy Diana</button>`;
   }
-
-  document.getElementById("extra").innerText=msg;
-
-  setTimeout(()=>{
-    step++;
-    if(step<questions.length){phase=0;render();}
-    else end();
-  },3500);
 }
 
-function no(){
-  const q=questions[step];
-  const extra=document.getElementById("extra");
+/* ---------- GÉNERO ---------- */
+function gender(card){
+  if(phase===0){
+    card.innerHTML=`
+      <h2>¿Eres chica?</h2>
+      <button class="yes" onclick="next()">Sí</button>
+      <button class="no" onclick="phase=1;render()">No</button>`;
+  } else if(phase===1){
+    card.innerHTML=`
+      <h2>Mmm… lo dudo 🤨</h2>
+      <button class="yes" onclick="next()">Está bien, sí soy una chica</button>
+      <button class="no" onclick="phase=2;render()">Te digo que soy chico</button>`;
+  } else {
+    card.innerHTML=`
+      <h2>Ajá… 😏</h2>
+      <button class="yes" onclick="next()">Me atrapaste, sí soy una chica</button>`;
+  }
+}
+
+/* ---------- ANIMALES ---------- */
+function animal(card,question,fact){
+  if(phase===0){
+    card.innerHTML=`
+      <h2>${question}</h2>
+      <button class="yes" onclick="animalYes('${fact}')">Sí</button>
+      <button class="no" onclick="phase=1;render()">No</button>`;
+  } else {
+    card.innerHTML=`
+      <h2>¿Seguro que no quieres aprender nada? 👀</h2>
+      <button class="yes" onclick="animalYes('${fact}')">Bueno… está bien</button>`;
+  }
+}
+
+function animalYes(fact){
+  const card=document.getElementById("card");
+  card.innerHTML=`<p>${fact}</p>`;
+  setTimeout(next,3500);
+}
+
+/* ---------- VALOR / MOTIVACIÓN ---------- */
+function worth(card,text,extra){
+  card.innerHTML=`
+    <h2>${text}</h2>
+    <button class="yes" onclick="showText('${extra}')">Sí</button>
+    <button class="no" onclick="moveNo()">No</button>`;
+}
+
+function moveNo(){
   noCount++;
-
-  if(q.type==="animal"){
-    if(phase===0){
-      extra.innerText="¿Quieres aprender un poco?";
-      phase=1;
-    }else if(noCount<3){
-      extra.innerText="Creo que en el fondo sí quieres 😉";
-    }else{
-      yes();
-    }
-    return;
+  const noBtn=document.querySelector(".no");
+  if(noCount>=4){
+    noBtn.remove();
+    document.querySelector(".yes").style.transform="scale(1.2)";
+  } else {
+    noBtn.style.left=(Math.random()*80-40)+"px";
+    noBtn.style.top=(Math.random()*40-20)+"px";
   }
+}
 
-  if(q.type==="name"){
-    if(phase===0){phase=1;render();return;}
-    if(phase===1){phase=2;render();return;}
-  }
+/* ---------- SERENDIPIA ---------- */
+function serendipia(card){
+  card.innerHTML=`
+    <h2>¿Sabes qué significa la palabra serendipia?</h2>
+    <button class="yes" onclick="showText(
+      'Serendipia es encontrar algo bonito, valioso o significativo cuando no lo estabas buscando. A veces la vida hace eso: te pone algo enfrente justo cuando más lo necesitas, aunque no lo hayas pedido.'
+    )">Sí</button>
+    <button class="no" onclick="showText(
+      'Serendipia significa descubrir algo bonito por accidente. Como cuando, en medio de un momento difícil, aparece una pequeña luz que te recuerda que aún hay cosas buenas esperándote.'
+    )">No</button>`;
+}
 
-  if(q.type==="gender"){
-    if(phase<2){phase++;render();return;}
-  }
+/* ---------- COMÚN ---------- */
+function showText(t){
+  const card=document.getElementById("card");
+  card.innerHTML=`
+    <p>${t}</p>
+    <button class="yes" onclick="next()">Finalizar</button>`;
+}
 
-  if(noCount<4){
-    extra.innerText=["¿Estás segura?","Piénsalo otra vez","No te creo mucho 😅"][noCount-1];
-    document.querySelector(".no").style.left=(Math.random()*120-60)+"px";
-  }else{
-    document.querySelector(".no").remove();
-    extra.innerText="Parece que solo queda una opción 🙂";
-  }
+function onlyYes(text){
+  const card=document.getElementById("card");
+  card.innerHTML=`
+    <p>${text}</p>
+    <button class="yes" onclick="next()">Continuar</button>`;
+}
+
+function next(){
+  step++; phase=0; noCount=0;
+  render();
 }
 
 function end(){
   document.getElementById("card").innerHTML=`
-    <h2>Gracias por llegar hasta aquí 🐸💙</h2>
+    <h2>Gracias por responder 🐸💙</h2>
     <p>
       Esta encuesta fue realizada por el<br>
-      <strong>Equipo Internacional de Investigación de Ranas</strong>
+      <strong>Equipo Internacional de Investigación de Ranas</strong>.
     </p>
     <p>
       (Esto es porque las ranas son mi animal favorito 🐸)
     </p>
     <p>
-      Concluimos que eres alguien valiosa, fuerte,
-      que merece cosas bonitas incluso en momentos difíciles.
+      Después de analizar cuidadosamente tus respuestas,
+      concluimos que eres una persona valiosa, fuerte,
+      y capaz de salir adelante incluso en momentos difíciles.
     </p>
     <p>
-      Gracias por tomarte este tiempo ✨
+      No tienes que correr, no tienes que demostrar nada,
+      y no tienes que hacerlo perfecto.
     </p>
-  `;
+    <p>
+      Gracias por tomarte este momento ✨
+    </p>`;
 }
 </script>
 
