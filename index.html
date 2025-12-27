@@ -62,13 +62,9 @@ let phase = 0;
 let noCount = 0;
 
 const flow = [
-  "diana",
-  "gender",
-  "animal1",
-  "animal2",
-  "animal3",
-  "animal4",
-  "worth",
+  "diana","gender",
+  "animal1","animal2","animal3","animal4",
+  "worth1","worth2","worth3","worth4","worth5",
   "end"
 ];
 
@@ -98,7 +94,11 @@ function render(){
     case "animal4": animal(card,
       "¿Sabías que el ajolote puede regenerar corazón y cerebro?",
       "Sanar también puede ser un proceso natural 🐸"); break;
-    case "worth": worth(card); break;
+    case "worth1": worth(card,"¿Eres consciente de que vales muchísimo?"); break;
+    case "worth2": simple(card,"¿Sabes que has logrado mucho por ti misma?"); break;
+    case "worth3": simple(card,"¿Sabes que puedes con esto y con mucho más?"); break;
+    case "worth4": simple(card,"¿Sabes que no tienes que tener todo resuelto ahora?"); break;
+    case "worth5": simple(card,"¿Te das permiso de avanzar a tu ritmo?"); break;
     case "end": end(); break;
   }
 }
@@ -146,34 +146,23 @@ function animal(card,question,fact){
       <button class="no" onclick="phase=1;render()">No</button>`;
   } else {
     card.innerHTML=`
-      <h2>¿Quieres aprender un poco?</h2>
-      <button class="yes" onclick="animalYes('${fact}')">Sí</button>
-      <button class="no" onclick="animalForce('${fact}')">No</button>`;
+      <h2>¿Seguro que no quieres aprender nada? 👀</h2>
+      <button class="yes" onclick="animalYes('${fact}')">Bueno… está bien</button>`;
   }
 }
 
 function animalYes(fact){
-  showFact(fact);
-}
-
-function animalForce(fact){
-  showFact(fact);
-}
-
-function showFact(text){
   const card=document.getElementById("card");
-  card.innerHTML=`<p>${text}</p>`;
+  card.innerHTML=`<p>${fact}</p>`;
   setTimeout(next,3500);
 }
 
 /* ---------- VALOR ---------- */
-function worth(card){
-  if(noCount===0){
-    card.innerHTML=`
-      <h2>¿Eres consciente de que vales muchísimo?</h2>
-      <button class="yes" onclick="showFact('A veces solo hace falta que alguien lo recuerde ✨')">Sí</button>
-      <button class="no" onclick="moveNo()">No</button>`;
-  }
+function worth(card,text){
+  card.innerHTML=`
+    <h2>${text}</h2>
+    <button class="yes" onclick="showText('A veces solo hace falta que alguien lo recuerde ✨')">Sí</button>
+    <button class="no" onclick="moveNo()">No</button>`;
 }
 
 function moveNo(){
@@ -188,7 +177,19 @@ function moveNo(){
   }
 }
 
+function simple(card,text){
+  card.innerHTML=`
+    <h2>${text}</h2>
+    <button class="yes" onclick="next()">Sí</button>`;
+}
+
 /* ---------- COMÚN ---------- */
+function showText(t){
+  const card=document.getElementById("card");
+  card.innerHTML=`<p>${t}</p>`;
+  setTimeout(next,3500);
+}
+
 function onlyYes(text){
   const card=document.getElementById("card");
   card.innerHTML=`
@@ -203,10 +204,26 @@ function next(){
 
 function end(){
   document.getElementById("card").innerHTML=`
-    <h2>Gracias por responder 🐸</h2>
-    <p>Encuesta realizada por el <strong>Equipo de Investigación de Ranas</strong></p>
-    <p>(porque son mi animal favorito)</p>
-    <p>Eres valiosa y mereces cosas bonitas 💙</p>`;
+    <h2>Gracias por responder 🐸💙</h2>
+    <p>
+      Esta encuesta fue realizada por el<br>
+      <strong>Equipo Internacional de Investigación de Ranas</strong>.
+    </p>
+    <p>
+      (Esto es porque las ranas son mi animal favorito 🐸)
+    </p>
+    <p>
+      Después de analizar cuidadosamente tus respuestas,
+      concluimos que eres una persona valiosa, fuerte,
+      y capaz de salir adelante incluso en momentos difíciles.
+    </p>
+    <p>
+      No tienes que correr, no tienes que demostrar nada,
+      y no tienes que hacerlo perfecto.
+    </p>
+    <p>
+      Gracias por tomarte este momento ✨
+    </p>`;
 }
 </script>
 
