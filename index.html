@@ -71,7 +71,7 @@
 
 <body>
 
-<!-- 🎵 Música -->
+<!-- 🎵 Música (opcional, no rompe en celular) -->
 <audio id="bgMusic" loop>
   <source src="https://cdn.pixabay.com/audio/2022/10/30/audio_3c7a33c6f2.mp3" type="audio/mpeg">
 </audio>
@@ -136,8 +136,13 @@ const questions = [
 ];
 
 function start() {
-  document.getElementById("bgMusic").volume = 0.25;
-  document.getElementById("bgMusic").play();
+  const music = document.getElementById("bgMusic");
+  music.volume = 0.25;
+
+  // Intentar reproducir música sin romper la ejecución
+  music.play().catch(() => {
+    console.log("El navegador bloqueó la música, pero seguimos 🙂");
+  });
 
   step = 0;
   showQuestion();
@@ -157,7 +162,7 @@ function next() {
   document.getElementById("extra").innerHTML = questions[step].yesExtra;
 
   yesSize += 0.05;
-  document.getElementById("yesBtn").style.transform = \`scale(\${yesSize})\`;
+  document.getElementById("yesBtn").style.transform = `scale(${yesSize})`;
 
   setTimeout(() => {
     step++;
