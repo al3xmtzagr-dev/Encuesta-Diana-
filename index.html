@@ -161,7 +161,7 @@ function animalYes(fact){
 function worth(card,text,extra){
   card.innerHTML=`
     <h2>${text}</h2>
-    <button class="yes" onclick="showText('${extra}')">Sí</button>
+    <button class="yes" onclick="showTextAuto('${extra}')">Sí</button>
     <button class="no" onclick="moveNo()">No</button>`;
 }
 
@@ -181,16 +181,22 @@ function moveNo(){
 function serendipia(card){
   card.innerHTML=`
     <h2>¿Sabes qué significa la palabra serendipia?</h2>
-    <button class="yes" onclick="showText(
+    <button class="yes" onclick="showTextFinal(
       'Serendipia es encontrar algo bonito, valioso o significativo cuando no lo estabas buscando. A veces la vida hace eso: te pone algo enfrente justo cuando más lo necesitas, aunque no lo hayas pedido.'
     )">Sí</button>
-    <button class="no" onclick="showText(
+    <button class="no" onclick="showTextFinal(
       'Serendipia significa descubrir algo bonito por accidente. Como cuando, en medio de un momento difícil, aparece una pequeña luz que te recuerda que aún hay cosas buenas esperándote.'
     )">No</button>`;
 }
 
 /* ---------- COMÚN ---------- */
-function showText(t){
+function showTextAuto(t){
+  const card=document.getElementById("card");
+  card.innerHTML=`<p>${t}</p>`;
+  setTimeout(next,3500);
+}
+
+function showTextFinal(t){
   const card=document.getElementById("card");
   card.innerHTML=`
     <p>${t}</p>
